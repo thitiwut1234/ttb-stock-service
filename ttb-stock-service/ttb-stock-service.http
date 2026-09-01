@@ -1,0 +1,132 @@
+@baseUrl = http://localhost:5004
+@productId = 1
+@stockId = 1
+
+### 1. Get All Products (Paged, Search & Sort)
+GET {{baseUrl}}/api/products?pageNumber=1&pageSize=10&sortBy=CreateDate&isAscending=false
+Accept: application/json
+
+### 2. Search Products
+GET {{baseUrl}}/api/products?search=Laptop
+Accept: application/json
+
+### 3. Get Product By ID (Includes Stocks)
+GET {{baseUrl}}/api/products/{{productId}}
+Accept: application/json
+
+### 4. Create Product
+POST {{baseUrl}}/api/products
+Content-Type: application/json
+Accept: application/json
+
+{
+  "productCode": "PRD-KEYBOARD-RGB-002",
+  "productName": "Custom RGB Mechanical Keyboard V2",
+  "productPrice": 4500,
+  "active": true,
+  "createBy": "ADMIN",
+  "initialAmount": 50
+}
+
+### 5. Update Product
+PUT {{baseUrl}}/api/products/{{productId}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "productCode": "PRD-LAPTOP-001",
+  "productName": "ThinkPad X1 Carbon Gen 11 (Special Edition)",
+  "productPrice": 62000,
+  "active": true,
+  "updateBy": "ADMIN"
+}
+
+### 6. Delete Product
+DELETE {{baseUrl}}/api/products/{{productId}}
+Accept: application/json
+
+### 7. Get All Stocks
+GET {{baseUrl}}/api/stocks
+Accept: application/json
+
+### 8. Get Stocks by Product ID
+GET {{baseUrl}}/api/stocks/product/{{productId}}
+Accept: application/json
+
+### 9. Create Stock Entry
+POST {{baseUrl}}/api/stocks
+Content-Type: application/json
+Accept: application/json
+
+{
+  "productId": {{productId}},
+  "amount": 100,
+  "active": true,
+  "createBy": "SYSTEM"
+}
+
+### 10. Update Stock Entry
+PUT {{baseUrl}}/api/stocks/{{stockId}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "amount": 120,
+  "active": true,
+  "updateBy": "ADMIN"
+}
+
+### 11. Adjust Stock (Operation: 1=Add, 2=Deduct, 3=Set)
+POST {{baseUrl}}/api/stocks/adjust
+Content-Type: application/json
+Accept: application/json
+
+{
+  "productId": {{productId}},
+  "operation": 1,
+  "amount": 25,
+  "updateBy": "WAREHOUSE_MANAGER"
+}
+
+### 12. Delete Stock
+DELETE {{baseUrl}}/api/stocks/{{stockId}}
+Accept: application/json
+
+### 13. Checkout Items (FIFO Stock Deduction & Transaction Log)
+POST {{baseUrl}}/api/stocks/checkout
+Content-Type: application/json
+Accept: application/json
+
+[
+  {
+    "productId": 1,
+    "amount": 2,
+    "createBy": "CASHIER_01"
+  },
+  {
+    "productId": 2,
+    "amount": 5,
+    "createBy": "CASHIER_01"
+  }
+]
+
+### 14. Checkout Items - Validation Test (Insufficient Stock)
+POST {{baseUrl}}/api/stocks/checkout
+Content-Type: application/json
+Accept: application/json
+
+[
+  {
+    "productId": 1,
+    "amount": 99999,
+    "createBy": "CASHIER_01"
+  }
+]
+
+### 15. Get All Transaction Logs
+GET {{baseUrl}}/api/stocks/transactions
+Accept: application/json
+
+### 16. Get Transaction Logs by Product ID
+GET {{baseUrl}}/api/stocks/transactions?productId={{productId}}
+Accept: application/json

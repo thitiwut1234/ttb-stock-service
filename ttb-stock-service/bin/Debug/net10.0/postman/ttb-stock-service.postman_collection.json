@@ -1,0 +1,608 @@
+{
+	"info": {
+		"_postman_id": "7b8e192f-c502-4638-89c0-9d08e5fca240",
+		"name": "TTB Stock & Product Service API",
+		"description": "Comprehensive Postman collection for TTB Stock & Product Web API (.NET 10 + PostgreSQL)\n\nTables: PRODUCT and STOCK (FK: PRODUCT_ID)\nSupports CRUD, search, sorting, pagination, and stock adjustments.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:5004",
+			"type": "string"
+		},
+		{
+			"key": "productId",
+			"value": "1",
+			"type": "string"
+		},
+		{
+			"key": "stockId",
+			"value": "1",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "1. Products",
+			"item": [
+				{
+					"name": "1.1 Get All Products (Paged & Sorted)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/products?pageNumber=1&pageSize=10&sortBy=CreateDate&isAscending=false",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"products"
+							],
+							"query": [
+								{
+									"key": "pageNumber",
+									"value": "1"
+								},
+								{
+									"key": "pageSize",
+									"value": "10"
+								},
+								{
+									"key": "sortBy",
+									"value": "CreateDate"
+								},
+								{
+									"key": "isAscending",
+									"value": "false"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "1.2 Search Products",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/products?search=Laptop",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"products"
+							],
+							"query": [
+								{
+									"key": "search",
+									"value": "Laptop"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "1.3 Get Product By ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/products/{{productId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"products",
+								"{{productId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "1.4 Create Product",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201 Created\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"var jsonData = pm.response.json();",
+									"if (jsonData.success && jsonData.data && jsonData.data.productId) {",
+									"    pm.collectionVariables.set(\"productId\", jsonData.data.productId.toString());",
+									"    console.log(\"Saved new productId: \" + jsonData.data.productId);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"productCode\": \"PRD-MONITOR-001\",\n  \"productName\": \"Dell UltraSharp 27 4K USB-C Hub Monitor\",\n  \"productPrice\": 18900,\n  \"active\": true,\n  \"createBy\": \"ADMIN\",\n  \"initialAmount\": 30\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/products",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "1.5 Update Product",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"productCode\": \"PRD-MONITOR-001-V2\",\n  \"productName\": \"Dell UltraSharp 27 4K Monitor (Updated)\",\n  \"productPrice\": 17500,\n  \"active\": true,\n  \"updateBy\": \"ADMIN\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/products/{{productId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"products",
+								"{{productId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "1.6 Delete Product",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/products/{{productId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"products",
+								"{{productId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "2. Stocks",
+			"item": [
+				{
+					"name": "2.1 Get All Stocks",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/stocks",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"stocks"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2.2 Get Stocks by Product ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/stocks/product/{{productId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"stocks",
+								"product",
+								"{{productId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2.3 Get Stock By ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/stocks/{{stockId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"stocks",
+								"{{stockId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2.4 Create Stock Entry",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201 Created\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"var jsonData = pm.response.json();",
+									"if (jsonData.success && jsonData.data && jsonData.data.stockId) {",
+									"    pm.collectionVariables.set(\"stockId\", jsonData.data.stockId.toString());",
+									"    console.log(\"Saved new stockId: \" + jsonData.data.stockId);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"productId\": {{productId}},\n  \"amount\": 100,\n  \"active\": true,\n  \"createBy\": \"SYSTEM\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/stocks",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"stocks"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2.5 Update Stock Entry",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"amount\": 120,\n  \"active\": true,\n  \"updateBy\": \"ADMIN\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/stocks/{{stockId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"stocks",
+								"{{stockId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2.6 Adjust Stock - Add Amount",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"productId\": {{productId}},\n  \"operation\": 1,\n  \"amount\": 25,\n  \"updateBy\": \"WAREHOUSE_MANAGER\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/stocks/adjust",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"stocks",
+								"adjust"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2.7 Adjust Stock - Deduct Amount",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"productId\": {{productId}},\n  \"operation\": 2,\n  \"amount\": 5,\n  \"updateBy\": \"CASHIER\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/stocks/adjust",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"stocks",
+								"adjust"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2.8 Adjust Stock - Set Amount",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"productId\": {{productId}},\n  \"operation\": 3,\n  \"amount\": 200,\n  \"updateBy\": \"AUDITOR\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/stocks/adjust",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"stocks",
+								"adjust"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2.9 Delete Stock Entry",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/stocks/{{stockId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"stocks",
+								"{{stockId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2.10 Checkout Items (FIFO Deduct & Log)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "[\n  {\n    \"productId\": {{productId}},\n    \"amount\": 2,\n    \"createBy\": \"CASHIER_01\"\n  }\n]"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/stocks/checkout",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"stocks",
+								"checkout"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2.11 Get All Transaction Logs",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/stocks/transactions",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"stocks",
+								"transactions"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "3. Documentation",
+			"item": [
+				{
+					"name": "3.1 Scalar API Interactive Docs",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/scalar/v1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"scalar",
+								"v1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "3.2 OpenAPI JSON Spec",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/openapi/v1.json",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"openapi",
+								"v1.json"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
